@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Extension Services Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Public+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F7F4;--panel:#fff;--ink:#17302A;--mute:#5B706A;--line:#D3E0D9;--deep:#12372F;--leaf:#2F8F5B;--gold:#E3A72F;--tint:#DDEBE3;--bad:#B4472F;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1D19;--panel:#172A24;--ink:#E5F0EA;--mute:#93AAA2;--line:#2A423A;--deep:#0A1512;--tint:#1F3A31;--leaf:#4CBF82}}
+:root[data-theme="dark"]{--bg:#0F1D19;--panel:#172A24;--ink:#E5F0EA;--mute:#93AAA2;--line:#2A423A;--deep:#0A1512;--tint:#1F3A31;--leaf:#4CBF82}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 "Public Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Public Sans",sans-serif;line-height:1.1;margin:0}
+.app{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+nav{background:var(--deep);color:#EAF4EE;padding:28px 18px;position:sticky;top:0;height:100vh;overflow:auto}
+nav b{font:800 20px "Bricolage Grotesque",sans-serif;display:block;margin:0 8px 4px}
+nav small{display:block;margin:0 8px 22px;color:#9DB8AE}
+nav button{display:flex;gap:10px;width:100%;text-align:left;background:none;border:0;color:#BCD3C9;font:inherit;font-size:15px;padding:10px 8px;border-radius:8px;cursor:pointer;border-left:3px solid transparent}
+nav button:hover{background:rgba(255,255,255,.07)}
+nav button.on{color:#fff;background:rgba(255,255,255,.1);border-left-color:var(--gold)}
+nav button i{font-style:normal;opacity:.6;min-width:1.2em}
+main{padding:44px clamp(20px,4vw,56px) 90px;width:100%;min-width:0}
+section{display:none}section.on{display:block}
+.hero h1{font-size:clamp(30px,3.6vw,46px);font-weight:800;max-width:none}
+.hero p{max-width:60ch;color:var(--mute);font-size:18px;margin:14px 0 0;text-align:left;hyphens:none}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{background:var(--tint);border:0;color:var(--ink);padding:10px 16px;border-radius:99px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.chip:hover{background:var(--leaf);color:#fff}
+h2{font-size:clamp(28px,4vw,42px);font-weight:800;margin-bottom:8px}
+.lede{color:var(--mute);max-width:none;margin:0 0 26px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.tabs button{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 14px;border-radius:10px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.tabs button.on{background:var(--deep);color:#fff;border-color:var(--deep)}
+.card ul{margin:10px 0 0;padding-left:20px}.card li{margin:7px 0}
+.steps{display:flex;gap:0;margin-bottom:18px;overflow-x:auto}
+.steps button{flex:1;min-width:110px;border:0;border-top:5px solid var(--line);background:none;color:var(--mute);padding:12px 8px 0;text-align:left;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.steps button.done{border-top-color:var(--leaf);color:var(--ink)}
+.steps button.on{border-top-color:var(--gold);color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:end}
+label{display:block;font-size:14px;color:var(--mute);font-weight:600}
+input[type=number],select{font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:110px}
+select{width:auto}
+.score{font:800 64px "Bricolage Grotesque",sans-serif;color:var(--leaf)}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:15px}
+th{color:var(--mute);font-weight:600}
+td input{width:84px}
+.bar{height:10px;background:var(--tint);border-radius:9px;overflow:hidden;min-width:110px}
+.bar span{display:block;height:100%;background:var(--leaf);transition:width .4s}
+.bar span.low{background:var(--gold)}.bar span.vlow{background:var(--bad)}
+.scroll{overflow-x:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.gap{font:800 34px "Bricolage Grotesque",sans-serif;color:var(--bad)}
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer;color:var(--ink);font-size:16px;font-weight:400}
+.check input{width:20px;height:20px;margin-top:3px;accent-color:var(--leaf)}
+.pager{display:flex;justify-content:space-between;margin-top:34px;gap:10px}
+.pager button{background:var(--deep);color:#fff;border:0;padding:12px 20px;border-radius:10px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.pager button:disabled{opacity:.3;cursor:default}
+.sub{font-size:20px;margin:28px 0 12px}
+.dates{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.dt{background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--leaf);border-radius:12px;padding:14px;text-align:left;cursor:pointer;color:var(--ink);font:inherit}
+.dt:hover,.dt:focus-visible{border-top-color:var(--gold)}
+.dt b{display:block;font:800 21px "Bricolage Grotesque",sans-serif;margin-bottom:4px}
+.dt span{font-size:14px;color:var(--mute)}
+.badge{display:inline-block;background:var(--gold);color:#17302A;font-weight:600;font-size:14px;padding:3px 12px;border-radius:99px;margin:0 0 10px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}
+.crit{margin-top:22px;background:var(--tint);border-radius:12px;padding:18px}
+.crit h4{margin:0 0 10px;font:800 18px "Bricolage Grotesque",sans-serif}
+.cr{display:grid;grid-template-columns:minmax(140px,1.4fr) 2fr 34px;gap:10px;align-items:center;font-size:14px;padding:5px 0}
+.cr .bar{background:var(--panel)}
+.cr b{text-align:right;font-family:"Bricolage Grotesque",sans-serif;font-size:16px}
+.tot{text-align:right;font-weight:600;border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+.mou{margin-top:22px;border:2px dashed var(--gold);border-radius:14px;padding:18px;background:var(--panel)}
+.mou .tag{display:inline-block;background:var(--gold);color:#17302A;font-weight:600;font-size:13px;padding:3px 12px;border-radius:99px;margin-bottom:8px}
+.flow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.flow span{background:var(--tint);padding:8px 12px;border-radius:8px;font-size:14px;flex:1 1 170px}
+.mut{color:var(--mute)}
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.rub{list-style:none;padding:0!important;margin:12px 0 0!important}
+.rub li{display:flex;gap:10px;align-items:baseline;font-size:15px;padding:6px 0;border-bottom:1px solid var(--line)}
+.rub b{background:var(--tint);border-radius:6px;padding:1px 8px;font-family:"Bricolage Grotesque",sans-serif;min-width:34px;text-align:center}
+.act{display:flex;gap:4px;align-items:center}
+.act button{border:0;background:none;color:var(--mute);font-size:20px;cursor:pointer}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:22px}
+.tile{background:var(--tint);border-radius:12px;padding:14px}
+.tile b{display:block;font:800 40px "Bricolage Grotesque",sans-serif}
+.tile.fin{background:var(--deep);color:#fff}.tile.fin label{color:#B8D0C6}.tile.fin b{color:var(--gold);font-size:46px}
+p,.lede{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+.note{font-size:14px;color:var(--mute);margin-top:12px}
+
+.phase{display:flex;gap:14px;align-items:center;margin:34px 0 14px;padding:12px 16px;border-radius:12px;background:var(--tint);border-left:6px solid var(--leaf)}
+.phase.pb{border-left-color:var(--gold)}.phase.pc{border-left-color:var(--deep)}
+.phase h3{font-size:22px}.phase small{color:var(--mute)}
+.pn{font:800 20px "Bricolage Grotesque",sans-serif;background:var(--deep);color:#fff;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none}
+.phase.pb .pn{background:var(--gold);color:#17302A}
+.steps.moa button{min-width:118px}
+.steps.moa button::before{content:attr(data-n);display:block;font:800 18px "Bricolage Grotesque",sans-serif;margin-bottom:2px}
+.warn{margin-top:14px;border:2px solid var(--gold);border-radius:12px;padding:12px 14px;background:var(--tint)}
+code{background:var(--tint);padding:2px 8px;border-radius:6px;font-size:.95em}
+.opt{cursor:pointer;text-align:left;font:inherit;color:var(--ink);background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:20px;transition:border-color .2s}
+.opt:hover{border-color:var(--leaf)}.opt.sel{border-color:var(--gold);box-shadow:0 0 0 3px rgba(227,167,47,.25)}
+.opt h4{font:800 22px "Bricolage Grotesque",sans-serif;margin:6px 0 10px}
+.opt .flow span{flex:0 1 auto;font-size:13px;padding:6px 10px}
+.opt .flow em{font-style:normal;color:var(--gold);font-weight:800;align-self:center}
+.opt ul{padding-left:20px;margin:12px 0 0}.opt li{margin:6px 0;font-size:15px}
+.dist{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+.src{background:var(--deep);color:#fff;border-radius:14px;padding:18px 24px;text-align:center;font-weight:600}
+.src b{display:block;font:800 48px "Bricolage Grotesque",sans-serif;color:var(--gold);line-height:1}
+.arr{font-size:32px;color:var(--gold);font-weight:800}
+.dests{flex:1;min-width:260px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.dests div{background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--leaf);border-radius:12px;padding:14px}
+.dests b{display:block;font:800 30px "Bricolage Grotesque",sans-serif;color:var(--leaf)}
+.done{margin-top:22px;background:var(--leaf);color:#fff;border-radius:14px;padding:18px 22px}
+.done b{display:block;font:800 22px "Bricolage Grotesque",sans-serif}
+.inst{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:0 0 26px;padding-bottom:14px;border-bottom:2px solid var(--line);color:var(--mute);font-size:15px;font-weight:600}
+.inst b{font:800 20px "Bricolage Grotesque",sans-serif;color:var(--leaf);letter-spacing:.2px}
+.inst .dot{color:var(--gold)}
+.herogrid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:32px;align-items:stretch}
+.sub2{font:700 20px/1.3 "Bricolage Grotesque",sans-serif;color:var(--leaf);margin:12px 0 0;text-align:left}
+.goal{background:var(--deep);color:#EAF4EE;border-radius:14px;padding:26px 28px;display:flex;flex-direction:column;justify-content:center;border-left:6px solid var(--gold)}
+.goal .tag{align-self:flex-start;background:var(--gold);color:#17302A;font-weight:600;font-size:13px;padding:3px 12px;border-radius:99px}
+.goal p{color:#EAF4EE;margin:12px 0 0;font-size:19px;max-width:none}
+.hero .sub{margin:34px 0 14px}
+.journey{display:grid;grid-template-columns:repeat(4,1fr);gap:26px 30px}
+.jstep{position:relative;display:flex;flex-direction:column;gap:10px;justify-content:flex-start;min-height:112px;background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--leaf);border-radius:12px;padding:14px 16px}
+.jstep b{font:800 15px "Bricolage Grotesque",sans-serif;color:#17302A;background:var(--gold);width:28px;height:28px;border-radius:50%;display:grid;place-items:center}
+.jstep span{font:600 16px/1.3 "Public Sans",sans-serif}
+.jstep::after{content:"→";position:absolute;right:-24px;top:50%;transform:translateY(-50%);color:var(--gold);font-weight:800;font-size:20px}
+.jstep:nth-child(4n)::after,.jstep:last-child::after{display:none}
+.jstep:last-child{border-top-color:var(--gold)}
+@media (max-width:900px){.herogrid{grid-template-columns:1fr}.journey{grid-template-columns:repeat(2,1fr)}.jstep:nth-child(4n)::after{display:block}.jstep:nth-child(2n)::after{display:none}}
+.rl>div:last-child{background:var(--tint);border-radius:12px;padding:16px 18px}.rl>div:first-child{padding:16px 4px}.rh{font:800 18px "Bricolage Grotesque",sans-serif;margin:4px 0 6px}.gl{display:block;margin-top:12px;color:var(--leaf)}.badge.alt{background:var(--deep);color:#fff}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@media (max-width:800px){.app{display:block}nav{position:static;height:auto;display:flex;overflow-x:auto;padding:12px;gap:4px}nav b,nav small{display:none}nav button{width:auto;white-space:nowrap;border-left:0;border-bottom:3px solid transparent}nav button.on{border-bottom-color:var(--gold)}nav button i{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<nav id="nav" aria-label="Guide sections"><b>Extension Services</b><small>Institutional guide</small></nav>
+<main>
+
+<section id="s0" class="hero">
+<div class="inst"><b>Batangas State University</b><span>The National Engineering University</span><span class="dot">•</span><span>ARASOF-Nasugbu</span></div>
+<div class="herogrid">
+<div><h1>Extension Services Guide</h1>
+<p class="sub2">Processes, Requirements, and Resources for Effective Community Extension</p>
+<p>Your reference for planning, implementing, monitoring, evaluating, documenting, and sustaining university extension programs and projects.</p></div>
+<div class="goal"><span class="tag">Our Goal</span><p>Responsive, needs-driven, evidence-based, sustainable, and impactful extension programs for our partner communities.</p></div>
+</div>
+<h3 class="sub">Explore the Guide</h3>
+<div class="chips" id="chips"></div>
+<h3 class="sub">The Extension Program Journey</h3>
+<div class="journey" id="journey"></div>
+</section>
+
+<section id="s1">
+<h2>Proposed Programs 2027–2031</h2>
+<p class="lede">A strong Extension Program begins with an identified and validated community need. Before developing a proposal, proponents should examine baseline data and research-based needs assessment results, determine how faculty expertise and academic programs can respond to the identified needs, and design related projects and activities with clear, measurable outcomes. The proposed program should establish a meaningful partnership with the target community or agency and demonstrate potential for sustainability and measurable community impact.</p>
+<div class="warn" style="margin:0 0 6px"><b>Start with the need, not the activity.</b><br>Identify and validate the community problem first, then design the program, projects, and activities as appropriate responses to that need.</div>
+<h3 class="sub">Key dates</h3>
+<div class="dates" id="dates"></div>
+<h3 class="sub">Process</h3>
+<div class="steps" id="col-steps"></div>
+<div class="card" id="col-card"></div>
+<div class="mou">
+<span class="tag">Parallel track: runs alongside Stages 1–6</span>
+<h3>Partnership and MOU/MOA Preparation</h3>
+<div class="flow">
+<span>Conduct exploratory discussions with prospective partner agencies/communities</span>
+<span>Discuss roles, responsibilities, commitments and areas of collaboration</span>
+<span>Start preparing/reviewing the MOU/MOA</span>
+<span>Coordinate review with the partner and the University legal team</span>
+<span><b>Goal:</b> MOU/MOA finalized and signed before 2027 implementation</span>
+</div>
+</div>
+</section>
+
+<section id="s2">
+<h2>Roles and Responsibilities</h2>
+<p class="lede">Clear roles and responsibilities ensure proper coordination, implementation, monitoring, and documentation of Extension Programs and Projects. Select a role to view its key responsibilities and required outputs.</p>
+<div class="tabs" id="role-tabs"></div>
+<div class="card" id="role-card"></div>
+</section>
+
+<section id="s3">
+<h2>Community Satisfaction Survey (CSS) Process</h2>
+<p class="lede">The CSS is administered, processed and reported by the designated Extension Services Office (ESO), not by the project team.</p>
+<div class="steps" id="css-steps"></div>
+<div class="card" id="css-card"></div>
+<div class="row" style="margin-top:14px"><button class="chip" id="css-prev">Previous step</button><button class="chip" id="css-next">Next step</button></div>
+<div class="two" style="margin-top:22px">
+<div class="mou" style="margin:0;border-style:solid"><span class="tag">Confidentiality &amp; Data Privacy</span>
+<ul style="margin:6px 0 0;padding-left:20px"><li>Beneficiary responses must remain confidential</li><li>Evaluators and personnel handling beneficiary data must sign an NDA before the survey</li><li>Survey data must be anonymized so individual respondents cannot be identified</li></ul></div>
+<div class="card"><h3>Who administers the CSS?</h3>
+<ul class="rub"><li><b>ESO Central</b>Projects under Central Administration</li><li><b>Campus ESO</b>Projects implemented by constituent and extension campuses</li></ul></div>
+</div>
+</section>
+
+<section id="s4">
+<h2>IPCR Pointing System for Extension</h2>
+<p class="lede">The Final IPCR Rating is the average of Quality (Q), Efficiency (E) and Timeliness (T).</p>
+<div class="three">
+<div class="card"><h3>Quality (Q)</h3><small class="mut">Role in the approved program/project proposal</small>
+<ul class="rub"><li><b>Q5</b>Program/Project Leader</li><li><b>Q4</b>Assistant Program/Project Leader</li><li><b>Q3</b>Project Staff</li><li><b>Q2</b>Participant</li><li><b>Q1</b>No participation in an approved extension program/project</li></ul>
+<p class="note">Only faculty members officially reflected in the approved Extension Program/Project Proposal with designated roles receive the corresponding Quality rating.</p></div>
+<div class="card"><h3>Efficiency (E)</h3><small class="mut">Based on beneficiary evaluation/satisfaction rating</small>
+<ul class="rub"><li><b>E5</b>Project obtained a 100% beneficiary evaluation/satisfaction rating</li><li><b>E4</b>Project obtained a 98%–99% rating</li><li><b>E3</b>Project obtained a 97% rating</li><li><b>E2</b>Project obtained a 90%–96% rating</li><li><b>E1</b>No participation in any approved extension program/project, or a rating below 90%</li></ul>
+<p class="note">For projects with multiple activities, the average beneficiary evaluation/satisfaction rating of all completed activities determines the E score.</p>
+<div class="crit" style="margin-top:12px;padding:12px 14px"><b>Example</b><br>Activity 1 = 96%, Activity 2 = 98%<br>Average = (96% + 98%) ÷ 2 = 97%, so <b>E = 3</b><br><button class="chip" id="ip-ex" style="margin-top:8px">Try this example</button></div></div>
+<div class="card"><h3>Timeliness (T)</h3><small class="mut">Submission of required reports/documents</small>
+<ul class="rub"><li><b>T5</b>Within 7 calendar days after the deadline</li><li><b>T4</b>8–14 calendar days after</li><li><b>T3</b>15–30 calendar days after</li><li><b>T2</b>More than 30 calendar days after</li><li><b>T1</b>No participation in an approved extension program/project</li></ul></div>
+</div>
+<h3 class="sub">IPCR Extension Rating Calculator</h3>
+<div class="card">
+<div class="row">
+<div><label for="ip-role">Faculty role (Quality)</label><select id="ip-role">
+<option value="5">Program/Project Leader</option><option value="4">Assistant Program/Project Leader</option><option value="3">Project Staff</option><option value="2">Participant</option><option value="1">No participation</option></select></div>
+<div><label for="ip-days">Days after deadline (0 if on time)</label><input type="number" id="ip-days" min="0" value="0"></div>
+</div>
+<label style="margin-top:18px">Beneficiary satisfaction rating per completed activity (%)</label>
+<div class="row" id="ip-acts" style="margin-top:6px"></div>
+<div class="row" style="margin-top:12px"><button class="chip" id="ip-add">Add activity</button><span class="note" id="ip-avg" style="margin:0"></span></div>
+<div class="res">
+<div class="tile"><label>Quality (Q)</label><b id="rq">–</b></div>
+<div class="tile"><label>Efficiency (E)</label><b id="re">–</b></div>
+<div class="tile"><label>Timeliness (T)</label><b id="rt">–</b></div>
+<div class="tile fin"><label>Final IPCR Rating</label><b id="rf">–</b></div>
+</div>
+<p class="note" id="ip-eq"></p>
+</div>
+</section>
+
+<section id="s5">
+<h2>MOA Preparation, Review &amp; Signing Process</h2>
+<p class="lede">A standardized process for preparing, reviewing, approving, signing, notarizing, and distributing Memoranda of Agreement (MOA) for Extension Programs and Projects.</p>
+
+<div class="phase pa"><span class="pn">A</span><div><h3>MOA Review &amp; Approval</h3><small>Select a stage to see what is required</small></div></div>
+<div class="steps moa" id="moa-steps"></div>
+<div class="card" id="moa-card"></div>
+<div class="row" style="margin-top:14px"><button class="chip" id="moa-prev">Previous stage</button><button class="chip" id="moa-next">Next stage</button></div>
+
+<div class="phase pb"><span class="pn">B</span><div><h3>MOA Signing Process</h3><small>After legal approval, choose a path. Select a card to highlight it.</small></div></div>
+<div class="two opts" id="opts"></div>
+
+<div class="phase pc"><span class="pn">C</span><div><h3>Distribution of Signed &amp; Notarized MOA</h3><small>Where the four (4) original copies go</small></div></div>
+<div class="dist"><div class="src"><b>4</b>Original Copies</div><div class="arr" aria-hidden="true">→</div>
+<div class="dests" id="dests"></div></div>
+<div class="done"><b>✓ MOA Process Complete</b><span>Partnership ready for program/project implementation.</span></div>
+</section>
+
+<div class="pager"><button id="prev">Previous</button><button id="next">Next</button></div>
+</main>
+</div>
+
+<script>
+const titles=["Home","Proposed Programs","Roles and Responsibilities","CSS Process","IPCR Pointing System","MOA Process"];
+const $=id=>document.getElementById(id);
+let cur=0;
+const nav=$("nav"),chips=$("chips");
+titles.forEach((t,i)=>{
+ const b=document.createElement("button");b.innerHTML=`<i>${i||""}</i>${t}`;b.onclick=()=>go(i);nav.appendChild(b);
+ if(i){const c=document.createElement("button");c.className="chip";c.textContent=i===1?"Proposed Programs 2027–2031":t;c.onclick=()=>go(i);chips.appendChild(c)}
+});
+function go(i){
+ cur=Math.max(0,Math.min(titles.length-1,i));
+ document.querySelectorAll("section").forEach((s,k)=>s.classList.toggle("on",k===cur));
+ nav.querySelectorAll("button").forEach((b,k)=>b.classList.toggle("on",k===cur));
+ $("prev").disabled=cur===0;$("next").disabled=cur===titles.length-1;
+ window.scrollTo(0,0);
+}
+$("prev").onclick=()=>go(cur-1);$("next").onclick=()=>go(cur+1);
+document.addEventListener("keydown",e=>{
+ if(e.target.matches("input,select"))return;
+ if(e.key==="ArrowRight")go(cur+1);if(e.key==="ArrowLeft")go(cur-1);
+});
+
+/* stepper helper */
+function stepper(stepsEl,cardEl,data,start=0){
+ let n=start;
+ function draw(){
+  stepsEl.innerHTML="";
+  data.forEach((d,i)=>{const b=document.createElement("button");b.textContent=d.t;
+   b.className=i<n?"done":i===n?"on":"";b.onclick=()=>{n=i;draw()};stepsEl.appendChild(b)});
+  const d=data[n];
+  cardEl.innerHTML=d.h||`<h3>${d.t}</h3><p>${d.p}</p><ul>${d.l.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+ }
+ draw();
+ return {move(k){n=Math.max(0,Math.min(data.length-1,n+k));draw()},set(i){n=i;draw()}};
+}
+
+const li=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+const crit=[["Relevance of the Project",15],["Availability of Baseline Data",10],["Baseline-Based SMART Objectives",10],["Gender-Disaggregated Data and Gender Analysis",8],["Clear Problem and Intended Solution",10],["Appropriate Implementation Strategies",8],["Innovation",8],["Partnership/Linkages with clearly identified roles",8],["Monitoring and Evaluation Plan and Indicators",8],["Potential for Adopters/Viable Demonstration",10],["Sustainability Plan",5]];
+const critHtml=`<div class="crit"><h4>Know the evaluation criteria</h4>${crit.map(c=>`<div class="cr"><span>${c[0]}</span><div class="bar"><span style="width:${c[1]/15*100}%"></span></div><b>${c[1]}</b></div>`).join("")}<div class="tot">Total: ${crit.reduce((t,c)=>t+c[1],0)} points</div></div>`;
+const stg=(h,d,body)=>`<h3>${h}</h3>${d?`<span class="badge">${d}</span>`:""}${body}`;
+const col=stepper($("col-steps"),$("col-card"),[
+ {t:"Prepare Proposal",h:stg("Stage 1: Prepare Proposal","September 1–30, 2026",`<div class="two"><div><b>Prepare</b>${li(["Detailed Extension Program Proposal","Work Plan","Line-Item Budget","Research-Based Needs Assessment with validated baseline data","Slide Presentation","Identified partner agency/community","Monitoring and Evaluation Plan","Sustainability and Community Impact Plan"])}</div><div><b>Proposals should</b>${li(["Respond to a validated community need supported by baseline data","Align with faculty expertise and academic programs","Have clear, measurable outputs and outcomes","Consist of related projects/activities addressing the needs","Identify a partner for a functional, mutually beneficial relationship","Show potential for sustainability and measurable community impact","Support University priorities and relevant SDGs"])}</div></div>`+critHtml)},
+ {t:"Campus Colloquium",h:stg("Stage 2: Campus Colloquium / Initial Evaluation","October 15, 2026",`<p>Present the proposed program for initial campus-level evaluation and refinement.</p>${li(["Document the feedback received","Incorporate it before the University-Wide Extension Colloquium"])}`)},
+ {t:"University-Wide Colloquium",h:stg("Stage 3: University-Wide Extension Colloquium","October 29, 2026",`<p>Present before a panel of internal and external evaluators (technical evaluation). Be ready to explain:</p>${li(["Identified community need and baseline evidence","Objectives and projects/activities","Implementation strategy and budget","Partnerships","Monitoring and evaluation","Sustainability and expected community impact"])}`)},
+ {t:"Revise & Campus Approval",h:stg("Stage 4: Revise & Campus Approval","",`<p>Incorporate the recommendations of the internal and external evaluators.</p>${li(["Revise the program proposal","Secure campus approval before presenting to the Extension Council"])}`)},
+ {t:"Extension Council",h:stg("Stage 5: Extension Council Evaluation","December 2026",`<p>Present the revised, campus-approved Extension Program Proposal to the Extension Council for evaluation and consideration.</p>`)},
+ {t:"Final Revision & Approval",h:stg("Stage 6: Final Revision & Approval","",`<p>Address any additional recommendations or required revisions from the Extension Council, then finalize the proposal for approval and implementation.</p>`)},
+ {t:"2027 Implementation",h:stg("Stage 7: 2027 Implementation","2027",`<p>Approved Extension Programs proceed beginning in 2027, following:</p>${li(["The approved work plan and budget","Partnership arrangements (signed MOU/MOA)","The monitoring and evaluation plan"])}`)}
+]);
+const dts=[["Sep 1–30, 2026","Submission of Program Proposal",0],["Oct 15, 2026","Initial Evaluation / Campus Colloquium",1],["Oct 29, 2026","University-Wide Extension Colloquium / Technical Evaluation",2],["Dec 2026","Extension Council Evaluation",4],["2027","Implementation of approved programs",6]];
+$("dates").innerHTML=dts.map((d,i)=>`<button class="dt" data-s="${d[2]}"><b>${d[0]}</b><span>${d[1]}</span></button>`).join("");
+$("dates").onclick=e=>{const b=e.target.closest(".dt");if(b)col.set(+b.dataset.s)};
+
+const roles={
+ "College Extension Coordinator":{d:"Serves as the primary coordinating link among the College, Program/Project Teams, Extension Services Office (ESO), partner agencies/communities, and beneficiaries.",
+  kr:["Coordinate College Extension Programs, Projects, schedules, and requirements.","Assist Program/Project Teams before, during, and after implementation.","Coordinate directly with the Extension Services Office (ESO) regarding requirements, procedures, schedules, and concerns.","Link and coordinate with partner agencies/communities and beneficiaries.","Facilitate communication, documentation, and logistical requirements.","Monitor implementation schedules and follow up pending requirements.","Assist in CSS, MOA, monitoring, evaluation, and post-implementation requirements.","Consolidate College extension accomplishments and maintain records."],
+  hd:"What to Prepare / Facilitate",kind:"Facilitate",
+  prep:["Document routing and endorsement","Activity and schedule coordination","Partner and beneficiary coordination","MOA coordination","CSS coordination","Documentary requirement monitoring","College accomplishment consolidation and records"]},
+ "Program Leader":{d:"Provides overall strategic, technical, and professional leadership of the Extension Program.",
+  kr:["Serve as Lead Resource Person and Technical/Professional Adviser.","Spearhead strategic planning and long-term program direction.","Provide field-specific direction and ensure quality of program interventions.","Ensure alignment with University VMGO, Extension Agenda, SDGs, and institutional priorities.","Review and approve program proposal and activity designs.","Lead partnerships, stakeholder engagements, and resource mobilization.","Oversee implementation, monitoring, evaluation, and compliance of component projects.","Lead program sustainability and review consolidated accomplishments."],
+  hd:"What to Prepare / Submit",kind:"Documents",intro:"After consolidation and coordination with the Program/Project Team, prepare, review, and sign, as applicable:",
+  prep:["Detailed Extension Program Proposal","Program Work Plan","Line-Item Budget","Program Monitoring Tool","Monitoring the Progress of the Program","Communication Letters concerning the overall Program","Program Terminal Report"],
+  },
+ "Assistant Program Leader":{d:"Supports the Program Leader in technical guidance, implementation oversight, and quality assurance.",
+  kr:["Serve as Resource Person and Technical/Professional Adviser.","Assist in proposal refinement and activity design review.","Review field-specific content, materials, and intervention strategies.","Coordinate with Project Leaders and partner agencies during implementation.","Provide technical/professional guidance to Project Teams.","Monitor project performance, outputs, outcomes, and quality.","Assist in resolving technical and implementation concerns.","Support progress reporting and serve as Officer-in-Charge when needed."],
+  hd:"What to Prepare / Facilitate",kind:"Facilitate",
+  prep:["Proposal and activity design review","Technical materials review","Monitoring inputs","Program documentation and reporting support","Assist the Program Leader in program-related requirements"]},
+ "Program/Project Coordinator":{d:"Coordinates implementation, schedules, documentation, resources, monitoring information, and reporting across the Extension Program.",
+  kr:["Serve as Technical/Professional Coordinator and Resource Person.","Coordinate program activities with Project Teams, partners, and beneficiaries.","Review activity plans, schedules, and implementation requirements.","Coordinate technical/professional resources and logistical requirements.","Coordinate with ESO on resources and items needed for purchase.","Monitor implementation schedules, deliverables, and participant outputs.","Manage evaluation results, monitoring data, and program records.","Ensure completeness of institutional, financial, and extension documentation.","Consolidate project outputs into periodic and annual program reports."],
+  hd:"What to Prepare / Facilitate",kind:"Facilitate",
+  prep:["Activity schedules and implementation coordination","Monitoring records and data","Evaluation results","Program documentation","Resource requirements and coordination with ESO for items to be purchased","Consolidation of project outputs and reports","Coordination of program records and requirements"]},
+ "Project Leader":{d:"Leads the technical implementation, evaluation, and documentation of a specific Extension Project.",
+  kr:["Serve as Lead Resource Person.","Lead training based on the faculty member's field of specialization.","Oversee development of training modules/materials based on the field of specialization.","Provide technical direction to trainers and Project Team Members.","Ensure project activities address the identified needs and goals of beneficiaries.","Evaluate competency outcomes and overall project effectiveness."],
+  hd:"What to Prepare / Submit to ESO",kind:"Documents",
+  groups:[["After each implemented activity",["Attendance Sheet","Evaluation Report"]],["For the overall Project",["Project Terminal Report"]],["As applicable",["Communication Letters concerning the specific Project"]]],
+  note:"Complete and submit required activity documentation after each implementation."},
+ "Project Team Members":{d:"Serve as Resource Persons and Technical Facilitators who support the delivery of Extension Project activities.",
+  kr:["Serve as Resource Persons and Technical Facilitators.","Conduct activities/training based on their field of specialization.","Facilitate learning and hands-on activities in their assigned technical areas.","Train and guide participants in relevant topics.","Provide technical assistance to beneficiaries.","Assess participants' outputs and learning outcomes."],
+  hd:"What to Prepare / Facilitate",kind:"Facilitate",
+  prep:["Training/activity materials","Participant outputs","Evaluation inputs","Activity documentation and supporting evidence","Assist the Project Leader in completing required project documentation and reports"]}
+};
+const rt=$("role-tabs"),rc=$("role-card");
+Object.keys(roles).forEach((r,i)=>{
+ const b=document.createElement("button");b.textContent=r;
+ b.onclick=()=>{rt.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  const o=roles[r];
+  let right=`<span class="badge">${o.kind}</span><h4 class="rh">${o.hd}</h4>`;
+  if(o.intro)right+=`<p style="margin:0">${o.intro}</p>`;
+  if(o.prep)right+=`<ul>${o.prep.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+  if(o.groups)right+=o.groups.map(g=>`<b class="gl">${g[0]}</b>${li(g[1])}`).join("");
+  rc.innerHTML=`<h3>${r}</h3><p>${o.d}</p><div class="two rl"><div><span class="badge alt">Responsibilities</span><h4 class="rh">Key Responsibilities</h4>${li(o.kr)}</div><div>${right}</div></div>`
+   +(o.note?`<div class="warn"><b>Reminder:</b> ${o.note}</div>`:"")};
+ rt.appendChild(b);if(!i)b.click();
+});
+const cs=(who,t)=>({t:t[0],h:`<h3>${t[0]}</h3><span class="badge">${who}</span><p>${t[1]}</p>`});
+const css=stepper($("css-steps"),$("css-card"),[
+ cs("Campus ESO + Project Leader",["Coordinate & Schedule","The Campus Extension Services Office (ESO) coordinates with the Extension Project Leader to set the survey schedule and arrangements for sampled beneficiaries, including those requiring special assistance."]),
+ cs("Designated ESO",["Pre-Survey Briefing","Before the CSS, the designated ESO briefs beneficiaries on the extension project, evaluation areas, rating scale, confidentiality of responses, proper survey completion, and informed consent."]),
+ cs("Campus ESO",["Administer CSS","The Campus ESO administers the CSS for faculty-led extension projects implemented by the campus. Additional evaluators may assist, provided they are not members of the project or the implementing college."]),
+ cs("Designated ESO",["Process Results","The designated ESO processes and computes the results using the prescribed CSS Form, required sampling procedures, and appropriate data privacy and confidentiality measures."]),
+ cs("Designated ESO → ESO Director → VCRDES",["Prepare & Submit CSSR","The designated ESO prepares the Client Satisfaction Survey Report (CSSR) and submits it to the Director of the Extension Services Office, countersigned by the Vice Chancellor for Research, Development and Extension Services (VCRDES), for review and approval."]),
+ cs("Project Leaders and Deans",["Report Results & Improve","Once approved, the CSSR is provided to the respective Project Leaders and Deans for college-initiated projects. Use the results for project evaluation and continuous improvement of extension initiatives."])
+]);
+$("css-prev").onclick=()=>css.move(-1);$("css-next").onclick=()=>css.move(1);
+
+/* IPCR calculator */
+const acts=$("ip-acts");
+function addAct(v){
+ const d=document.createElement("div");d.className="act";
+ d.innerHTML=`<span class="mut an" style="font-size:14px;min-width:78px"></span><input type="number" min="0" max="100" step="0.01" placeholder="%" value="${v??""}" aria-label="Satisfaction rating"><button title="Remove activity" aria-label="Remove activity">×</button>`;
+ d.querySelector("button").onclick=()=>{d.remove();ipcr()};
+ d.querySelector("input").oninput=ipcr;acts.appendChild(d);
+}
+$("ip-ex").onclick=()=>{$("ip-role").value="5";acts.innerHTML="";addAct(96);addAct(98);ipcr();$("ip-acts").scrollIntoView({block:"center",behavior:"smooth"})};
+$("ip-add").onclick=()=>{addAct();ipcr()};
+addAct(97);
+function ipcr(){
+ acts.querySelectorAll(".an").forEach((x,i)=>x.textContent="Activity "+(i+1));
+ const q=+$("ip-role").value,none=q===1;
+ const vals=[...acts.querySelectorAll("input")].map(i=>i.value).filter(v=>v!=="").map(Number);
+ const avg=vals.length?vals.reduce((x,y)=>x+y,0)/vals.length:null;
+ acts.querySelectorAll("input").forEach(i=>i.disabled=none);
+ $("ip-days").disabled=none;
+ let e=null,t=null;
+ if(none){e=1;t=1}
+ else{
+  if(avg!==null)e=avg>=100?5:avg>=98?4:avg>=97?3:avg>=90?2:1;
+  const d=+$("ip-days").value||0;
+  t=d<=7?5:d<=14?4:d<=30?3:2;
+ }
+ $("ip-avg").textContent=none?"No participation: E and T are automatically 1.":avg===null?"Enter at least one satisfaction rating.":`Average satisfaction: ${avg.toFixed(2)}% across ${vals.length} ${vals.length>1?"activities":"activity"} = E${e}`;
+ $("rq").textContent="Q"+q;$("re").textContent=e===null?"–":"E"+e;$("rt").textContent="T"+t;
+ if(e===null){$("rf").textContent="–";$("ip-eq").textContent="";return}
+ const f=(q+e+t)/3;
+ $("rf").textContent=f.toFixed(2);
+ $("ip-eq").textContent=`Q = ${q} | E = ${e} | T = ${t} | Final Rating = (${q} + ${e} + ${t}) ÷ 3 = ${f.toFixed(2)}`;
+}
+$("ip-role").onchange=ipcr;$("ip-days").oninput=ipcr;ipcr();
+
+/* Home journey */
+$("journey").innerHTML=["Identify Community Needs","Develop Program","Establish Partnership/MOA","Implement","Monitor & Evaluate","Document & Report","Improve & Sustain","Impact Assessment"].map((t,i)=>`<div class="jstep"><b>${i+1}</b><span>${t}</span></div>`).join("");
+
+/* MOA review workflow */
+const mh=(t,who,body)=>`<h3>${t}</h3><span class="badge">${who}</span>${body}`;
+const moaData=[
+ ["Prepare Requirements","College",mh("Prepare Requirements","College / Project Team",`<p>Complete the:</p>${li(["MOA Checklist","Draft MOA","Request for Legal Opinion/Review","Required supporting documents"])}<div class="warn"><b>Important:</b> The Request for Legal Opinion/Review must have a <b>Tracking Number</b> before submission.</div>`)],
+ ["Upload Draft MOA","College",mh("Upload Draft MOA","College",`<p>Upload the editable Word file to the designated Google Drive provided by External Affairs.</p><p><b>Required filename format:</b> <code>MOA_PartnerAgency</code><br><b>Example:</b> <code>MOA_DTI-Batangas</code></p>`)],
+ ["ESO Initial Review","ESO",mh("ESO Initial Review","Extension Services Office",`<p>Submit the complete documents to the Extension Services Office (ESO) for initial review.</p>`)],
+ ["External Affairs Review","EA",mh("External Affairs Review","External Affairs Office",`<p>ESO forwards the documents to the External Affairs (EA) Office for further review.</p>`)],
+ ["Campus Legal Review","Campus Legal",mh("Campus Legal Review","Campus Legal Office",`<p>If no further adjustments are required, EA endorses the MOA to the Campus Legal Office for legal review.</p>`)],
+ ["Office of the Chancellor","OC",mh("Office of the Chancellor","Office of the Chancellor",`<p>Campus Legal forwards the MOA to the Office of the Chancellor (OC).</p>`)],
+ ["Central Legal Review","Central Legal",mh("Central Legal Review","Central Legal Office",`<p>OC endorses the MOA to the Central Legal Office.</p><p>If there are concerns, Central Legal coordinates with the ESO or directly with the concerned college for the necessary revisions.</p>`)],
+ ["Approved MOA & Legal Opinion","Central Legal",mh("Approved MOA & Legal Opinion","Central Legal Office",`<p>If there are no concerns, Central Legal forwards the approved MOA with Legal Opinion to the OC and ESO.</p>`)],
+ ["Return to College","ESO",mh("Return to College","ESO → College Extension Coordinator",`<p>ESO forwards the approved MOA to the College Extension Coordinator for final preparation and signing.</p>`)]
+];
+const moaSteps=$("moa-steps");
+const moa=stepper(moaSteps,$("moa-card"),moaData.map(d=>({t:d[0],h:d[2]})));
+(function(){ function tag(){moaSteps.querySelectorAll("button").forEach((b,i)=>b.dataset.n=i+1)}
+ tag();
+ moaSteps.addEventListener("click",()=>setTimeout(tag,0));
+ $("moa-prev").onclick=()=>{moa.move(-1);tag()};$("moa-next").onclick=()=>{moa.move(1);tag()};
+})();
+
+/* MOA signing options */
+const flowH=a=>`<div class="flow">${a.map((x,i)=>`<span>${x}</span>${i<a.length-1?"<em>→</em>":""}`).join("")}</div>`;
+const opts=[
+ ["Option 1","No MOA Signing Ceremony",["Print 4 Copies","Partner Signature","OVCRDES Signature","Chancellor Signature","Notarization"],[
+  "College Extension Coordinator prints four (4) copies of the approved MOA.",
+  "College Extension Coordinator and/or Program/Project Leader endorses the MOA to the partner institution for signature.",
+  "Upon receipt of the partner-signed MOA, submit it to OVCRDES for signature.",
+  "OVCRDES forwards it to the Office of the Chancellor, as final signatory.",
+  "After all signatures are completed, the concerned college facilitates notarization.",
+  "Notarization expenses may be requested through petty cash from the Cashiering Office, subject to fund availability."]],
+ ["Option 2","With MOA Signing Ceremony",["Print & Verify","Confirm Signatories & Guests","Reserve Venue","Inform Chancellor","Ceremony Setup","Ceremony","Notarization"],[
+  "College Extension Coordinator prints four (4) copies and ensures all documents are complete.",
+  "College coordinates and confirms the availability of signatories, university officials, and invited guests.",
+  "Reserve the Livelihood Training Center (LTC) or Hostel, subject to availability.",
+  "Formally inform the Office of the Chancellor in advance and provide the confirmed list of signatories and guests and a brief overview of the Extension Program/Project.",
+  "Assist LTC personnel with the physical setup.",
+  "Request the Philippine Flag and BatStateU Flag from the General Services Office (GSO).",
+  "ESO supports the preparation of food and tokens.",
+  "The College ensures that audio-visual equipment is installed and tested and that presentation materials are ready.",
+  "After the ceremony, the concerned college facilitates notarization.",
+  "Notarization expenses may be requested through petty cash, subject to fund availability."]]
+];
+$("opts").innerHTML=opts.map(o=>`<button class="opt" aria-pressed="false"><span class="badge">${o[0]}</span><h4>${o[1]}</h4>${flowH(o[2])}<ul>${o[3].map(x=>`<li>${x}</li>`).join("")}</ul></button>`).join("");
+$("opts").onclick=e=>{const b=e.target.closest(".opt");if(!b)return;
+ const was=b.classList.contains("sel");
+ $("opts").querySelectorAll(".opt").forEach(x=>{x.classList.remove("sel");x.setAttribute("aria-pressed","false")});
+ if(!was){b.classList.add("sel");b.setAttribute("aria-pressed","true")}};
+
+/* Distribution */
+$("dests").innerHTML=[["Concerned College"],["Extension Services Office (ESO)"],["Office of the Chancellor"],["Partner Agency"]].map(d=>`<div><b>1</b>${d[0]}</div>`).join("");
+go(0);
+</script>
+</body>
+</html>
