@@ -133,7 +133,19 @@ code{background:var(--tint);padding:2px 8px;border-radius:6px;font-size:.95em}
 .jstep:nth-child(4n)::after,.jstep:last-child::after{display:none}
 .jstep:last-child{border-top-color:var(--gold)}
 @media (max-width:900px){.herogrid{grid-template-columns:1fr}.journey{grid-template-columns:repeat(2,1fr)}.jstep:nth-child(4n)::after{display:block}.jstep:nth-child(2n)::after{display:none}}
-.rl>div:last-child{background:var(--tint);border-radius:12px;padding:16px 18px}.rl>div:first-child{padding:16px 4px}.rh{font:800 18px "Bricolage Grotesque",sans-serif;margin:4px 0 6px}.gl{display:block;margin-top:12px;color:var(--leaf)}.badge.alt{background:var(--deep);color:#fff}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.rl>div:last-child{background:var(--tint);border-radius:12px;padding:16px 18px}.rl>div:first-child{padding:16px 4px}.rh{font:800 18px "Bricolage Grotesque",sans-serif;margin:4px 0 6px}.gl{display:block;margin-top:12px;color:var(--leaf)}.badge.alt{background:var(--deep);color:#fff}.pi-pill{display:inline-block;padding:4px 12px;border-radius:99px;font:700 13px inherit;color:#fff}
+.pi-pill.met{background:var(--leaf)}.pi-pill.partial{background:var(--gold);color:#17302A}
+.ta-stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.ta-stat b{display:block;font:800 34px "Bricolage Grotesque",sans-serif;color:var(--leaf)}
+.ta-stat.warn2 b{color:var(--gold)}
+#ta-list{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+#ta-list button{position:relative;padding:10px 30px 10px 14px;text-align:center;justify-content:center}
+@media (max-width:900px){#ta-list{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:560px){#ta-list{grid-template-columns:repeat(2,1fr)}}
+#ta-list button .dot{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:var(--leaf)}
+#ta-list button.partial .dot{background:var(--gold)}
+.unit-table td:first-child,.unit-table th:first-child{width:60%}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 @media (max-width:800px){.app{display:block}nav{position:static;height:auto;display:flex;overflow-x:auto;padding:12px;gap:4px}nav b,nav small{display:none}nav button{width:auto;white-space:nowrap;border-left:0;border-bottom:3px solid transparent}nav button.on{border-bottom-color:var(--gold)}nav button i{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -252,12 +264,42 @@ code{background:var(--tint);padding:2px 8px;border-radius:6px;font-size:.95em}
 <div class="done"><b>✓ MOA Process Complete</b><span>Partnership ready for program/project implementation.</span></div>
 </section>
 
+<section id="s6">
+<h2>Targets and Accomplishments</h2>
+<p class="lede">Consolidated Extension Performance and Budget Status Report — Batangas State University TNEU ARASOF-Nasugbu. Select a performance indicator to view its target, accomplishment, variance, status, and the breakdown per college/office.</p>
+
+<div class="grid" id="ta-summary" style="margin-bottom:22px"></div>
+
+<div class="tabs" id="ta-filters"></div>
+<div class="tabs" id="ta-list" style="margin-bottom:18px"></div>
+<div class="card" id="ta-card"></div>
+</section>
+
+<section id="s7">
+<h2>Strategies and Commitments</h2>
+<p class="lede">A snapshot of what still needs to be completed across all colleges, and by college/department, to close performance and documentation gaps.</p>
+
+<h3 style="margin:0 0 14px">Overall Snapshot</h3>
+<div class="grid" id="sc-summary" style="margin-bottom:30px"></div>
+
+<h3 style="margin:0 0 14px">Common Strategies</h3>
+<div class="grid" style="margin-bottom:30px">
+<div class="card"><b>Fast-track pending activities</b><ul><li>Confirm dates with partner communities as early as possible.</li><li>Assign a project leader to each pending or rescheduled activity.</li></ul></div>
+<div class="card"><b>Close the documentation gap</b><ul><li>Submit attendance sheets and reports promptly after each activity.</li><li>Collect CSS forms at every activity.</li></ul></div>
+<div class="card"><b>Strengthen coordination</b><ul><li>Track IPCR points earned per activity.</li><li>Review progress regularly with the College Extension Coordinator.</li></ul></div>
+</div>
+
+<h3 style="margin:0 0 14px">Per College/Department Commitments</h3>
+<div class="tabs" id="sc-tabs"></div>
+<div class="card" id="sc-card"></div>
+</section>
+
 <div class="pager"><button id="prev">Previous</button><button id="next">Next</button></div>
 </main>
 </div>
 
 <script>
-const titles=["Home","Proposed Programs","Roles and Responsibilities","CSS Process","IPCR Pointing System","MOA Process"];
+const titles=["Home","Proposed Programs","Roles and Responsibilities","CSS Process","IPCR Pointing System","MOA Process","Targets and Accomplishments","Strategies and Commitments"];
 const $=id=>document.getElementById(id);
 let cur=0;
 const nav=$("nav"),chips=$("chips");
@@ -449,6 +491,138 @@ $("opts").onclick=e=>{const b=e.target.closest(".opt");if(!b)return;
 
 /* Distribution */
 $("dests").innerHTML=[["Concerned College"],["Extension Services Office (ESO)"],["Office of the Chancellor"],["Partner Agency"]].map(d=>`<div><b>1</b>${d[0]}</div>`).join("");
+
+/* Targets and Accomplishments */
+const taData=[
+ {id:"PI-01",name:"Number of faculty members who took the Basic and Advanced Course in Community Service",src:"AOP, QEO, OPCR, OPMM",target:10,acc:10,varr:"0",status:"met",units:[["CABEIHM",2],["CCJE",2],["CHS",1],["CICS",1],["CTE",2],["Laboratory School",2]]},
+ {id:"PI-02",name:"Number of approved extension programs conducted",src:"QEO, OPMM",target:13,acc:1,varr:"-12",status:"partial",units:[["CABEIHM",4],["CAS",4],["CCJE",1],["CHS",1],["CICS",1],["CTE",2]]},
+ {id:"PI-03",name:"Number of external beneficiaries weighted by the length of training",src:"QEO, OPMM",target:1408,acc:1446,varr:"+38",status:"met",units:[["CABEIHM",436],["CAS",436],["CCJE",109],["CHS",109],["CICS",109],["CTE",218]]},
+ {id:"PI-04",name:"Percentage of trainees who rate the training course at least satisfactory in terms of quality and relevance",src:"QEO, OPMM",target:"97%",acc:"100%",varr:"+3%",status:"met",units:[["CABEIHM","97%"],["CAS","97%"],["CCJE","97%"],["CHS","97%"],["CICS","97%"],["CTE","97%"],["Laboratory School","97%"]]},
+ {id:"PI-05",name:"Number of notarized Memorandum of Understanding (MOU) / Memorandum of Agreement (MOA)",src:"QEO, OPMM",target:15,acc:12,varr:"-3",status:"partial",units:[["CABEIHM",3],["CAS",4],["CCJE",2],["CHS",2],["CICS",1],["CTE",2],["Laboratory School",1]]},
+ {id:"PI-06",name:"Number of campus projects adopting COMLEX as a community development approach",src:"AOP, OPMM",target:1,acc:1,varr:"0",status:"met",units:[["CABEIHM",1]]},
+ {id:"PI-07",name:"Number of pool of experts organized per specialization",src:"AOP, OPMM",target:1,acc:1,varr:"0",status:"met",units:[["CAS",1]]},
+ {id:"PI-08",name:"Number of initial implementation of training for families and communities",src:"AOP, OPMM",target:1,acc:1,varr:"0",status:"met",units:[["CTE",1]]},
+ {id:"PI-09",name:"Number of social innovation projects utilized by the community",src:"AOP, OPMM",target:1,acc:1,varr:"0",status:"met",units:[["CICS",1]]},
+ {id:"PI-10",name:"Number of faculty members monitored who have completed and implemented the course",src:"AOP, OPMM",target:1,acc:1,varr:"0",status:"met",units:[["CABEIHM",1],["CICS",1]]},
+ {id:"PI-11",name:"Number of radio program episodes addressing emerging and pressing concerns aired/produced",src:"AOP, OPMM",target:1,acc:1,varr:"0",status:"met",units:[["CAS",1]]},
+ {id:"PI-12",name:"Number of livelihood and capacity-building trainings conducted",src:"OPMM",target:2,acc:2,varr:"0",status:"met",units:[["CABEIHM",1],["CAS",1]]},
+ {id:"PI-13",name:"Number of conducted technical advisory for industries and other institutions",src:"OPMM",target:11,acc:11,varr:"0",status:"met",units:[["CABEIHM",3],["CAS",3],["CCJE",1],["CHS",1],["CICS",1],["CTE",2]]},
+ {id:"PI-14",name:"Budget Utilization Rate",src:"Budget",target:"70%",acc:"34%",varr:"-36%",status:"partial",units:[["CABEIHM","70%"],["CAS","70%"],["CCJE","70%"],["CHS","70%"],["CICS","70%"],["CTE","70%"],["Laboratory School","70%"]]}
+];
+(function(){
+ const metCount=taData.filter(d=>d.status==="met").length;
+ const partCount=taData.length-metCount;
+ $("ta-summary").innerHTML=`
+  <div class="ta-stat"><label>Total Indicators</label><b>${taData.length}</b></div>
+  <div class="ta-stat"><label>Met</label><b>${metCount}</b></div>
+  <div class="ta-stat warn2"><label>Partially Met</label><b>${partCount}</b></div>`;
+
+ const filters=["All","Met","Partially Met"];
+ const filterEl=$("ta-filters"),listEl=$("ta-list"),cardEl=$("ta-card");
+ let activeFilter="All",activeId=taData[0].id;
+
+ function renderCard(d){
+  const pct = (typeof d.target==="number" && d.target>0) ? Math.min(100,Math.round((typeof d.acc==="number"?d.acc:parseFloat(d.acc))/d.target*100)) : null;
+  cardEl.innerHTML=`
+   <span class="pi-pill ${d.status}">${d.status==="met"?"MET":"Partially MET"}</span>
+   <h3 style="margin-top:10px">${d.id} — ${d.name}</h3>
+   <p class="note">Source: ${d.src}</p>
+   <div class="grid" style="margin:16px 0">
+    <div class="ta-stat"><label>Target</label><b>${d.target}</b></div>
+    <div class="ta-stat"><label>Accomplishment</label><b>${d.acc}</b></div>
+    <div class="ta-stat ${d.status==='partial'?'warn2':''}"><label>Variance</label><b>${d.varr}</b></div>
+   </div>
+   <div class="scroll"><table class="unit-table"><thead><tr><th>College / Office</th><th>Figure</th></tr></thead><tbody>
+    ${d.units.map(u=>`<tr><td>${u[0]}</td><td>${u[1]}</td></tr>`).join("")}
+   </tbody></table></div>`;
+ }
+
+ function renderList(){
+  listEl.innerHTML="";
+  taData.filter(d=>activeFilter==="All"||(activeFilter==="Met"&&d.status==="met")||(activeFilter==="Partially Met"&&d.status==="partial")).forEach(d=>{
+   const b=document.createElement("button");
+   b.className=(d.id===activeId?"on ":"")+d.status;
+   b.innerHTML=`${d.id}<span class="dot"></span>`;
+   b.title=d.name;
+   b.onclick=()=>{activeId=d.id;renderList();renderCard(d)};
+   listEl.appendChild(b);
+  });
+  const cur=taData.find(d=>d.id===activeId)||taData.filter(d=>activeFilter==="All"||(activeFilter==="Met"&&d.status==="met")||(activeFilter==="Partially Met"&&d.status==="partial"))[0];
+  if(cur){activeId=cur.id;renderCard(cur)}
+ }
+
+ filterEl.innerHTML="";
+ filters.forEach(f=>{
+  const b=document.createElement("button");b.textContent=f;b.className=f===activeFilter?"on":"";
+  b.onclick=()=>{activeFilter=f;filterEl.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");renderList()};
+  filterEl.appendChild(b);
+ });
+ renderList();
+})();
+
+/* Strategies and Commitments */
+(function(){
+ const scData={
+  "CICS":{act:{impl:3},doc:{"Attendance Sheets":{pending:0,overdue:0},"Evaluation Reports":{pending:0,overdue:0},"Terminal Reports":{pending:0,overdue:0},"Monitoring Tools":{pending:0,overdue:0},"Monitoring the Progress":{pending:0,overdue:0},"Rescheduling Letters":{pending:0,overdue:0}}},
+  "CHS":{act:{impl:0},doc:{"Attendance Sheets":{pending:3,overdue:0},"Evaluation Reports":{pending:3,overdue:0},"Terminal Reports":{pending:3,overdue:0},"Monitoring Tools":{pending:3,overdue:0},"Monitoring the Progress":{pending:3,overdue:0},"Rescheduling Letters":{pending:0,overdue:0}}},
+  "CTE":{act:{impl:22},doc:{"Attendance Sheets":{pending:3,overdue:16},"Evaluation Reports":{pending:3,overdue:16},"Terminal Reports":{pending:0,overdue:0},"Monitoring Tools":{pending:0,overdue:0},"Monitoring the Progress":{pending:0,overdue:0},"Rescheduling Letters":{pending:11,overdue:0}}},
+  "CABEIHM":{act:{impl:10},doc:{"Attendance Sheets":{pending:0,overdue:2},"Evaluation Reports":{pending:0,overdue:5},"Terminal Reports":{pending:0,overdue:0},"Monitoring Tools":{pending:0,overdue:0},"Monitoring the Progress":{pending:0,overdue:0},"Rescheduling Letters":{pending:0,overdue:0}}},
+  "CAS":{act:{impl:28},doc:{"Attendance Sheets":{pending:1,overdue:26},"Evaluation Reports":{pending:1,overdue:26},"Terminal Reports":{pending:3,overdue:0},"Monitoring Tools":{pending:8,overdue:0},"Monitoring the Progress":{pending:8,overdue:0},"Rescheduling Letters":{pending:19,overdue:0}}},
+  "CCJE":{act:{impl:6},doc:{"Attendance Sheets":{pending:0,overdue:5},"Evaluation Reports":{pending:0,overdue:5},"Terminal Reports":{pending:0,overdue:0},"Monitoring Tools":{pending:0,overdue:0},"Monitoring the Progress":{pending:0,overdue:0},"Rescheduling Letters":{pending:0,overdue:0}}},
+  "Laboratory School":{act:{impl:0},doc:{"Attendance Sheets":{pending:1,overdue:1},"Evaluation Reports":{pending:1,overdue:1},"Terminal Reports":{pending:2,overdue:0},"Monitoring Tools":{pending:0,overdue:1},"Monitoring the Progress":{pending:0,overdue:1},"Rescheduling Letters":{pending:0,overdue:0}}}
+ };
+ const colleges=Object.keys(scData);
+
+ let totalImpl=0,totalPending=0,totalOverdue=0;
+ colleges.forEach(c=>{
+  totalImpl+=scData[c].act.impl;
+  Object.values(scData[c].doc).forEach(d=>{totalPending+=d.pending;totalOverdue+=d.overdue});
+ });
+ $("sc-summary").innerHTML=`
+  <div class="ta-stat"><label>Activities Pending Implementation</label><b>${totalImpl}</b></div>
+  <div class="ta-stat warn2"><label>Documents Pending Submission</label><b>${totalPending}</b></div>
+  <div class="ta-stat" style="border-left:4px solid var(--bad)"><label>Documents Overdue</label><b style="color:var(--bad)">${totalOverdue}</b></div>`;
+
+ function buildItems(d){
+  const items=[];
+  if(d.act.impl>0)items.push(`Implement or reschedule ${d.act.impl} pending ${d.act.impl===1?"activity":"activities"}.`);
+  Object.entries(d.doc).forEach(([type,v])=>{
+   if(v.overdue>0)items.push(`Submit ${v.overdue} overdue ${type}.`);
+   if(v.pending>0)items.push(`Submit ${v.pending} pending ${type} awaiting submission.`);
+  });
+  if(!items.length)items.push("No outstanding activities or documents — fully compliant.");
+  return items;
+ }
+
+ const tabsEl=$("sc-tabs"),cardEl=$("sc-card");
+ let activeCollege=colleges[0];
+ function renderCard(){
+  const d=scData[activeCollege];
+  const items=buildItems(d);
+  cardEl.innerHTML=`<h3>${activeCollege}</h3>
+   <div id="sc-checks"></div>
+   <p class="note" id="sc-progress" style="margin-top:10px"></p>
+   <div class="bar" style="margin-top:6px"><span id="sc-bar"></span></div>`;
+  const checksEl=cardEl.querySelector("#sc-checks");
+  checksEl.innerHTML=items.map((c,i)=>`<label class="check"><input type="checkbox" data-sc="${i}"> <span>${c}</span></label>`).join("");
+  function updateProgress(){
+   const n=checksEl.querySelectorAll("[data-sc]:checked").length;
+   $("sc-progress").textContent=`${n} of ${items.length} addressed`;
+   $("sc-bar").style.width=(items.length?n/items.length*100:100)+"%";
+  }
+  checksEl.onchange=updateProgress;
+  updateProgress();
+ }
+ tabsEl.innerHTML="";
+ colleges.forEach(c=>{
+  const b=document.createElement("button");b.textContent=c;b.className=c===activeCollege?"on":"";
+  b.onclick=()=>{activeCollege=c;tabsEl.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");renderCard()};
+  tabsEl.appendChild(b);
+ });
+ renderCard();
+})();
+
+
 go(0);
 </script>
 </body>
