@@ -145,6 +145,11 @@ code{background:var(--tint);padding:2px 8px;border-radius:6px;font-size:.95em}
 #ta-list button .dot{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:var(--leaf)}
 #ta-list button.partial .dot{background:var(--gold)}
 .unit-table td:first-child,.unit-table th:first-child{width:60%}
+.mfo-table{width:100%;border-collapse:collapse;text-align:left}
+.mfo-table th{background:var(--gold);color:#17302A;font:800 16px "Bricolage Grotesque",sans-serif;padding:16px 20px;border:1px solid var(--gold)}
+.mfo-table td{padding:16px 20px;border:1px solid var(--line);text-align:justify;font-size:15px;line-height:1.6}
+.mfo-table td:first-child{font-weight:700;text-align:left;width:32%;vertical-align:top}
+.mfo-table .mfo-head{background:var(--tint);font:800 16px "Bricolage Grotesque",sans-serif;text-align:left}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 @media (max-width:800px){.app{display:block}nav{position:static;height:auto;display:flex;overflow-x:auto;padding:12px;gap:4px}nav b,nav small{display:none}nav button{width:auto;white-space:nowrap;border-left:0;border-bottom:3px solid transparent}nav button.on{border-bottom-color:var(--gold)}nav button i{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -215,6 +220,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <section id="s4">
 <h2>IPCR Pointing System for Extension</h2>
 <p class="lede">The Final IPCR Rating is the average of Quality (Q), Efficiency (E) and Timeliness (T).</p>
+
+<div class="scroll" style="margin-bottom:26px">
+<table class="mfo-table">
+<thead><tr><th>Major Final Output</th><th>Success Indicator (Targets+Measures)</th></tr></thead>
+<tbody>
+<tr><td colspan="2" class="mfo-head">EXTENSION (10%)</td></tr>
+<tr><td>Involvement in Extension Activities</td><td>Participation in at least one (1) extension service project aligned with the faculty member's field of specialization, fulfilling assigned roles and responsibilities and delivering quality services to the community with at least a 97% beneficiary satisfaction rating.</td></tr>
+</tbody>
+</table>
+</div>
+
 <div class="three">
 <div class="card"><h3>Quality (Q)</h3><small class="mut">Role in the approved program/project proposal</small>
 <ul class="rub"><li><b>Q5</b>Program/Project Leader</li><li><b>Q4</b>Assistant Program/Project Leader</li><li><b>Q3</b>Project Staff</li><li><b>Q2</b>Participant</li><li><b>Q1</b>No participation in an approved extension program/project</li></ul>
